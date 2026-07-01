@@ -1,0 +1,11 @@
+# Eaglercraft 26.1.1
+Credit to q13x For making this happen
+
+Message from q13x
+"Hi there! Three things:
+
+1. Performance is gonna suck. This is closer to a PoC than it is a faithful port. Expect up to 2GB of ram to be used at a time and severe lag spikes, especially on older hardware. 
+2. Sound does not work in this build.
+3. Not *all* Eaglercraft servers will accept your connection because this client is innately unique: no other public Eaglercraft client speaks the networking protocol used by Minecraft 26.1.2. So, some servers will reject your connection entirely. Others might not. If you want to host a compatible 26.1.2 server, you MUST run EaglerXBungee behind a Velocity server pointed at a 26.1.2 Minecraft server upstream: the plugin doesn't work at all on modern Paper.
+
+Have fun!"
