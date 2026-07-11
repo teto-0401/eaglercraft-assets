@@ -11,20 +11,63 @@
 		<meta property="og:title" content="Eaglercraft 26.1.2" />
 		<meta property="og:description" content="test directory HTML page" />
 		<link type="image/png" rel="shortcut icon" href="favicon.png" />
-		<script type="text/javascript" src="classes.js"></script>
+		<style type="text/css">
+			body { font-family: Arial, sans-serif; }
+			#launcher {
+				position: absolute;
+				inset: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: linear-gradient(135deg, #111, #222);
+				color: white;
+				z-index: 10;
+			}
+			#launcherCard {
+				background: rgba(0,0,0,0.75);
+				border: 1px solid rgba(255,255,255,0.15);
+				border-radius: 12px;
+				padding: 24px;
+				width: min(92vw, 420px);
+				box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+			}
+			#launcherCard button {
+				padding: 10px 14px;
+				border: none;
+				border-radius: 6px;
+				background: #3f8cff;
+				color: white;
+				cursor: pointer;
+			}
+			#status {
+				margin-top: 10px;
+				font-size: 13px;
+				color: #cfd8e3;
+				min-height: 1.2em;
+			}
+		</style>
 		<script type="text/javascript">
 			"use strict";
 			window.addEventListener("load", function() {
+				var launcher = document.getElementById("launcher");
+				var status = document.getElementById("status");
+				var startButton = document.getElementById("startButton");
+
 				if(window.location.href.indexOf("file:") === 0) {
+					status.textContent = "Use HTTP, not file://, or the runtime will not start.";
 					alert("HTTP please, do not open this file locally, run a local HTTP server and load it via HTTP");
-				}else {
+					return;
+				}
+
+				function startClient() {
 					var relayId = Math.floor(Math.random() * 3);
+
 					window.eaglercraftXOpts = {
 						demoMode: false,
 						container: "game_frame",
-						assetsURI: "assets.epk",
-						localesURI: "lang/",
-						worldsDB: "worlds",
+						assetsURI: "assets/assets.epk",
+						localesURI: "assets/lang/",
+						worldsDB: "assets/worlds",
 						logInvalidCerts: true,
 						crashOnUncaughtExceptions: true,
 						servers: [
@@ -36,19 +79,38 @@
 							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId === 2 }
 						]
 					};
+					status.textContent = "Loading Eaglercraft runtime…";
+					launcher.style.display = "none";
 
-					var q = window.location.search;
-					if((typeof q === "string") && q[0] === "?" && (typeof window.URLSearchParams !== "undefined")) {
-						q = new window.URLSearchParams(q);
-						var s = q.get("server");
-						if(s) window.eaglercraftXOpts.joinServer = s;
-					}
-
-					main();
+					var script = document.createElement("script");
+					script.src = "classes.js";
+					script.onload = function() {
+						if(typeof window.main === "function") {
+							window.main();
+						} else {
+							status.textContent = "Runtime loaded, but main() was not found.";
+							launcher.style.display = "flex";
+						}
+					};
+					script.onerror = function() {
+						status.textContent = "Failed to load classes.js.";
+						launcher.style.display = "flex";
+					};
+					document.head.appendChild(script);
 				}
+
+				startButton.addEventListener("click", startClient);
 			});
 		</script>
 	</head>
-	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:black;" id="game_frame">
+	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:black;position:relative;" id="game_frame">
+		<div id="launcher">
+			<div id="launcherCard">
+				<h1 style="margin:0 0 8px; font-size: 24px;">Eaglercraft 26.1.2</h1>
+				<p style="margin:0 0 8px; color:#d0d7de;">Start the client only when you are ready.</p>
+				<button id="startButton" type="button">Start client</button>
+				<div id="status">Ready.</div>
+			</div>
+		</div>
 	</body>
 </html>
